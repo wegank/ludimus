@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(uxplay)
+project(ludimus)
 
 set (CMAKE_CXX_STANDARD 11)
 
@@ -11,8 +11,8 @@ add_subdirectory(lib/plist)
 add_subdirectory(lib)
 add_subdirectory(renderers)
 
-add_executable( uxplay uxplay.cpp)
-target_link_libraries ( uxplay renderers airplay )
+add_executable( ludimus ludimus.cpp)
+target_link_libraries ( ludimus renderers airplay )
 
-install(PROGRAMS uxplay DESTINATION bin)
+install(PROGRAMS ludimus DESTINATION bin)
 
