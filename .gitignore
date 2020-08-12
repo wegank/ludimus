@@ -10,3 +10,4 @@
 /captures
 .externalNativeBuild
 .vscode/
+.markdownlint.json
