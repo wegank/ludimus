@@ -13,13 +13,20 @@
  */
 
 #include <time.h>
-#include <netinet/in.h>
 #include "byteutils.h"
 
-#ifndef htonll
-#include <endian.h>
-#define htonll(x) htobe64(x)
-#define ntohll(x) be64toh(x)
+#ifdef WIN32
+#  include <winsock2.h>
+#  ifndef ntonll
+#    define ntohll(x) ((1==ntohl(1)) ? (x) : (((uint64_t)ntohl((x) & 0xFFFFFFFFUL)) << 32) | ntohl((uint32_t)((x) >> 32)))
+#  endif
+#else
+#  include <netinet/in.h>
+#  ifndef htonll
+#   include <endian.h>
+#   define htonll(x) htobe64(x)
+#   define ntohll(x) be64toh(x)
+#  endif
 #endif
 
 // The functions in this file assume a little endian cpu architecture!

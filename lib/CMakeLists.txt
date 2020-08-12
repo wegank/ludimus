@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 include_directories( curve25519 ed25519 playfair )
 
+set(CMAKE_C_STANDARD 11)
+
 aux_source_directory(. play_src)
 set(DIR_SRCS ${play_src})
 
@@ -13,4 +15,8 @@ target_link_libraries( airplay OpenSSL::Crypto )
 
 if(UNIX AND NOT APPLE)
     target_link_libraries( airplay dns_sd )  
+endif()
+
+if(WIN32)
+    target_link_libraries( airplay ws2_32 )  
 endif()

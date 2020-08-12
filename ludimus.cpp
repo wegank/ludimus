@@ -33,7 +33,10 @@
 #include "renderers/video_renderer.h"
 #include "renderers/audio_renderer.h"
 
+#ifndef WIN32
 #include <glib-unix.h>
+#endif
+
 #include <gst/gst.h>
 #include <gst/app/gstappsrc.h>
 
@@ -274,9 +277,12 @@ void term_main_loop(gpointer user_data) {
 
 void main_loop() {
     GstElement *pipeline = gst_pipeline_new(NULL);
+    
+    #ifndef WIN32
     signal_watch_intr_id = g_unix_signal_add(SIGINT, (GSourceFunc) intr_main_loop, pipeline);
     signal_watch_term_id = g_unix_signal_add(SIGTERM, (GSourceFunc) term_main_loop, pipeline);
-    
+    #endif
+
     loop = g_main_loop_new(NULL, FALSE);
     g_main_loop_run(loop);
     
