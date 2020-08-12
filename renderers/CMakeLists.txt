@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.4.1)
         STATIC
         audio_renderer_gstreamer.c video_renderer_gstreamer.c)
   include_directories ( renderers ${GST_INCLUDE_DIRS} )
-  target_link_libraries ( renderers ${GST_LIBRARIES} )
+  target_link_libraries ( renderers ${GST_LINK_LIBRARIES} )
 
   
 
