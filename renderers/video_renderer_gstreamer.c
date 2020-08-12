@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <gst/gst.h>
 #include <gst/app/gstappsrc.h>
+#include <stdlib.h>
 
 struct video_renderer_s {
     logger_t *logger;

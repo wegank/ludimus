@@ -20,7 +20,16 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
+
+#ifdef WIN32
+#include <winsock2.h>
+#define TCP_KEEPALIVE 3
+#define TCP_KEEPCNT 16
+#define TCP_KEEPIDLE TCP_KEEPALIVE
+#define TCP_KEEPINTVL 17
+#else
 #include <netinet/tcp.h>
+#endif
 
 #include "raop.h"
 #include "netutils.h"
@@ -222,21 +231,21 @@ raop_rtp_mirror_thread(void *arg)
             struct timeval tv;
             tv.tv_sec = 0;
             tv.tv_usec = 5000;
-            if (setsockopt(stream_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+            if (setsockopt(stream_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)) < 0) {
                 logger_log(raop_rtp_mirror->logger, LOGGER_ERR, "raop_rtp_mirror could not set stream socket timeout %d %s", errno, strerror(errno));
                 break;
             }
             int option;
             option = 1;
-            if (setsockopt(stream_fd, SOL_SOCKET, SO_KEEPALIVE, &option, sizeof(option)) < 0) {
+            if (setsockopt(stream_fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&option, sizeof(option)) < 0) {
                 logger_log(raop_rtp_mirror->logger, LOGGER_WARNING, "raop_rtp_mirror could not set stream socket keepalive %d %s", errno, strerror(errno));
             }
             option = 60;
-            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPIDLE, &option, sizeof(option)) < 0) {
+            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPIDLE, (char *)&option, sizeof(option)) < 0) {
                 logger_log(raop_rtp_mirror->logger, LOGGER_WARNING, "raop_rtp_mirror could not set stream socket keepalive time %d %s", errno, strerror(errno));
             }
             option = 10;
-            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPINTVL, &option, sizeof(option)) < 0) {
+            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPINTVL, (char *)&option, sizeof(option)) < 0) {
                 logger_log(raop_rtp_mirror->logger, LOGGER_WARNING, "raop_rtp_mirror could not set stream socket keepalive interval %d %s", errno, strerror(errno));
             }
             option = 6;

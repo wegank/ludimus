@@ -101,7 +101,7 @@ netutils_init_socket(unsigned short *port, int use_ipv6, int use_udp)
         goto cleanup;
     }
 
-    ret = setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof (reuseaddr));
+    ret = setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseaddr, sizeof (reuseaddr));
     if (ret == -1) {
         goto cleanup;
     }

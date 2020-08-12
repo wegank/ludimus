@@ -64,7 +64,9 @@
 # endif
 
 typedef struct _DNSServiceRef_t *DNSServiceRef;
+#ifndef WIN32
 typedef union _TXTRecordRef_t { char PrivateData[16]; char *ForceNaturalAlignment; } TXTRecordRef;
+#endif
 
 typedef uint32_t DNSServiceFlags;
 typedef int32_t  DNSServiceErrorType;

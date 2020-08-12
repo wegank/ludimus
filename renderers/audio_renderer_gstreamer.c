@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <math.h>
 #include <gst/app/gstappsrc.h>
+#include <stdlib.h>
 
 struct audio_renderer_s {
     logger_t *logger;
