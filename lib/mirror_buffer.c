@@ -52,8 +52,8 @@ mirror_buffer_init_aes(mirror_buffer_t *mirror_buffer, uint64_t streamConnection
     char* siv = "AirPlayStreamIV";
     unsigned char skeyall[255];
     unsigned char sivall[255];
-    sprintf((char*) skeyall, "%s%llu", skey, streamConnectionID);
-    sprintf((char*) sivall, "%s%llu", siv, streamConnectionID);
+    sprintf((char*) skeyall, "%s%llu", skey, (unsigned long long) streamConnectionID);
+    sprintf((char*) sivall, "%s%llu", siv, (unsigned long long) streamConnectionID);
     sha_reset(ctx);
     sha_update(ctx, skeyall, strlen((char*) skeyall));
     sha_update(ctx, eaeskey, 16);
