@@ -12,7 +12,7 @@ add_subdirectory(lib)
 add_subdirectory(renderers)
 
 add_executable( ludimus ludimus.cpp)
-target_link_libraries ( ludimus renderers airplay )
+include_directories ( ludimus ${GST_INCLUDE_DIRS} )
+target_link_libraries ( ludimus renderers airplay ${GST_LINK_LIBRARIES} )
 
 install(PROGRAMS ludimus DESTINATION bin)
-

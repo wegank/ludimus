@@ -33,6 +33,10 @@
 #include "renderers/video_renderer.h"
 #include "renderers/audio_renderer.h"
 
+#include <glib-unix.h>
+#include <gst/gst.h>
+#include <gst/app/gstappsrc.h>
+
 #define VERSION "1.2"
 
 #define DEFAULT_NAME "Ludimus"
@@ -47,30 +51,17 @@ int start_server(std::vector<char> hw_addr, std::string name, background_mode_t 
 
 int stop_server();
 
+void main_loop();
+static GMainLoop *loop;
+static guint signal_watch_intr_id;
+static guint signal_watch_term_id;
+
 static bool running = false;
 static dnssd_t *dnssd = NULL;
 static raop_t *raop = NULL;
 static video_renderer_t *video_renderer = NULL;
 static audio_renderer_t *audio_renderer = NULL;
 
-static void signal_handler(int sig) {
-    switch (sig) {
-        case SIGINT:
-        case SIGTERM:
-            running = 0;
-            break;
-    }
-}
-
-static void init_signals(void) {
-    struct sigaction sigact;
-
-    sigact.sa_handler = signal_handler;
-    sigemptyset(&sigact.sa_mask);
-    sigact.sa_flags = 0;
-    sigaction(SIGINT, &sigact, NULL);
-    sigaction(SIGTERM, &sigact, NULL);
-}
 
 static int parse_hw_addr(std::string str, std::vector<char> &hw_addr) {
     for (int i = 0; i < str.length(); i += 3) {
@@ -103,8 +94,6 @@ void print_info(char *name) {
 }
 
 int main(int argc, char *argv[]) {
-    init_signals();
-
     background_mode_t background = DEFAULT_BACKGROUND_MODE;
     std::string server_name = DEFAULT_NAME;
     std::vector<char> server_hw_addr = DEFAULT_HW_ADDRESS;
@@ -138,10 +127,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    running = true;
-    while (running) {
-        sleep(1);
-    }
+    main_loop();
 
     LOGI("Stopping...");
     stop_server();
@@ -273,4 +259,30 @@ int stop_server() {
     if (audio_renderer) audio_renderer_destroy(audio_renderer);
     video_renderer_destroy(video_renderer);
     return 0;
+}
+
+
+void intr_main_loop(gpointer user_data) {
+    signal_watch_intr_id = 0;
+    g_main_loop_quit(loop);
+}
+
+void term_main_loop(gpointer user_data) {
+    signal_watch_term_id = 0;
+    g_main_loop_quit(loop);
+}
+
+void main_loop() {
+    GstElement *pipeline = gst_pipeline_new(NULL);
+    signal_watch_intr_id = g_unix_signal_add(SIGINT, (GSourceFunc) intr_main_loop, pipeline);
+    signal_watch_term_id = g_unix_signal_add(SIGTERM, (GSourceFunc) term_main_loop, pipeline);
+    
+    loop = g_main_loop_new(NULL, FALSE);
+    g_main_loop_run(loop);
+    
+    gst_element_set_state(pipeline, GST_STATE_NULL);
+    gst_object_unref(pipeline);
+    if (signal_watch_intr_id > 0) g_source_remove(signal_watch_intr_id);
+    if (signal_watch_term_id > 0) g_source_remove(signal_watch_term_id);
+    g_main_loop_unref(loop);
 }
