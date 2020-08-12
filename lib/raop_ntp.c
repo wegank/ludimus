@@ -204,7 +204,7 @@ raop_ntp_init_socket(raop_ntp_t *raop_ntp, int use_ipv6)
     struct timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = 3000;
-    if (setsockopt(tsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+    if (setsockopt(tsock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)) < 0) {
         goto sockets_cleanup;
     }
 

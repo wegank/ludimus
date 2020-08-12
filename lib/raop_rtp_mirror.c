@@ -249,7 +249,7 @@ raop_rtp_mirror_thread(void *arg)
                 logger_log(raop_rtp_mirror->logger, LOGGER_WARNING, "raop_rtp_mirror could not set stream socket keepalive interval %d %s", errno, strerror(errno));
             }
             option = 6;
-            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPCNT, &option, sizeof(option)) < 0) {
+            if (setsockopt(stream_fd, SOL_TCP, TCP_KEEPCNT, (char *)&option, sizeof(option)) < 0) {
                 logger_log(raop_rtp_mirror->logger, LOGGER_WARNING, "raop_rtp_mirror could not set stream socket keepalive probes %d %s", errno, strerror(errno));
             }
             readstart = 0;
