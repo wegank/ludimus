@@ -40,7 +40,7 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsrc.h>
 
-#define VERSION "1.2"
+#define VERSION "1.1"
 
 #define DEFAULT_NAME "Ludimus"
 #define DEFAULT_BACKGROUND_MODE BACKGROUND_MODE_ON
@@ -91,7 +91,7 @@ void print_info(char *name) {
     printf("Usage: %s [-n name]\n", name);
     printf("Options:\n");
     printf("-n name		Specify the network name of the AirPlay server\n");
-    printf("-a  	Turn audio off. Only video output\n");
+    printf("-a  	Turn off audio and show video only\n");
     printf("-d		Enable debug logging\n");
     printf("-v/-h		Displays this help and version information\n");
 }
