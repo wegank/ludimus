@@ -96,8 +96,8 @@ script:
   - |-
     case $TRAVIS_OS_NAME in
       windows)
-        $mingw64 mkdir build
-        $mingw64 cd build
+        mkdir build
+        cd build
         $mingw64 cmake .. -G "MinGW Makefiles"
         $mingw64 mingw32-make
         ;;
