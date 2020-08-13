@@ -1,0 +1,110 @@
+language: cpp
+
+jobs:
+  include:
+    - name: "Ludimus on macOS 10.15"
+      os: osx
+      osx_image: xcode11.6
+      env:
+        - LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+        - CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+        - PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+    - name: "Ludimus on Ubuntu 20.04"
+      os: linux
+      dist: focal
+    - name: "Ludimus on Windows 10"
+      os: windows
+
+compiler: gcc
+
+addons:
+  homebrew:
+    packages:
+      - cmake
+      - openssl
+      - gstreamer
+      - gst-plugins-base
+      - gst-plugins-good
+      - gst-plugins-bad
+      - gst-plugins-ugly
+      - gst-libav
+  apt:
+    packages:
+      - git
+      - cmake
+      - libssl-dev
+      - libavahi-compat-libdnssd-dev
+      - libgstreamer1.0-dev
+      - libgstreamer-plugins-base1.0-dev
+      - gstreamer1.0-plugins-base
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-plugins-bad
+      - gstreamer1.0-plugins-ugly
+      - gstreamer1.0-libav
+      - gstreamer1.0-vaapi
+      - gstreamer1.0-doc
+      - gstreamer1.0-tools
+      - gstreamer1.0-x
+      - gstreamer1.0-alsa
+      - gstreamer1.0-gl
+      - gstreamer1.0-gtk3
+      - gstreamer1.0-qt5
+      - gstreamer1.0-pulseaudio
+
+before_install:
+  - |-
+    case $TRAVIS_OS_NAME in
+      windows)
+        [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
+        choco uninstall -y mingw
+        choco upgrade --no-progress -y msys2
+        export msys2='cmd //C RefreshEnv.cmd '
+        export msys2+='& set MSYS=winsymlinks:nativestrict '
+        export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
+        export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+        export msys2+=" -msys2 -c "\"\$@"\" --"
+        $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain
+        $msys2 pacman --sync --noconfirm --needed git \
+          mingw-w64-x86_64-cmake \
+          mingw-w64-x86_64-openssl \
+          mingw-w64-x86_64-gstreamer \
+          mingw-w64-x86_64-gst-plugins-base \
+          mingw-w64-x86_64-gst-plugins-good \
+          mingw-w64-x86_64-gst-plugins-bad \
+          mingw-w64-x86_64-gst-plugins-ugly \
+          mingw-w64-x86_64-gst-libav
+        taskkill //IM gpg-agent.exe //F
+        export PATH=/C/tools/msys64/mingw64/bin:$PATH
+        export MAKE=mingw32-make
+        ;;
+    esac
+
+before_cache:
+  - |-
+    case $TRAVIS_OS_NAME in
+      windows)
+        $msys2 pacman --sync --clean --noconfirm
+        ;;
+    esac
+
+cache:
+  directories:
+    - $HOME/AppData/Local/Temp/chocolatey
+    - /C/tools/msys64
+
+script:
+  - |-
+    case $TRAVIS_OS_NAME in
+      windows)
+        $mingw64 mkdir build
+        $mingw64 cd build
+        $mingw64 cmake .. -G "MinGW Makefiles"
+        $mingw64 mingw32-make
+        ;;
+      *)
+        mkdir build
+        cd build
+        cmake ..
+        make
+        ;;
+    esac
