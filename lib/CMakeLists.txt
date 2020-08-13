@@ -10,7 +10,10 @@ add_library( airplay STATIC ${DIR_SRCS} )
 
 target_link_libraries( airplay pthread curve25519 ed25519 playfair plist )
 
-set(OPENSSL_USE_STATIC_LIBS TRUE)
+if(WIN32)
+    set(OPENSSL_USE_STATIC_LIBS TRUE)
+endif()
+
 find_package(OpenSSL REQUIRED)
 target_link_libraries( airplay OpenSSL::Crypto )
 

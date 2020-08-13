@@ -13,7 +13,7 @@ add_subdirectory(renderers)
 
 add_executable( ludimus ludimus.cpp)
 include_directories ( ludimus ${GST_INCLUDE_DIRS} )
-target_link_libraries ( ludimus renderers airplay ${GST_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries ( ludimus renderers airplay )
   
 if(WIN32)
     target_link_libraries( ludimus -static-libgcc -static-libstdc++ -static )
