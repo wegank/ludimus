@@ -1,6 +1,6 @@
 # Ludimus
 
-[![Build Status](https://travis-ci.org/wegank/ludimus.svg?branch=master)](https://travis-ci.org/wegank/ludimus)
+![build](https://github.com/wegank/ludimus/workflows/build/badge.svg)
 
 Ludimus is a cross-platform AirPlay mirroring server, based on [RPiPlay](https://github.com/FD-/RPiPlay) and [UxPlay](https://github.com/antimof/UxPlay).
 
