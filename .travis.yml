@@ -6,6 +6,8 @@ jobs:
       os: osx
       osx_image: xcode11.6
       env:
+        - LIBRARY_PATH="/usr/local/lib"
+        - CPATH="/usr/local/include"
         - LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
         - CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
         - PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
@@ -22,6 +24,7 @@ addons:
     packages:
       - cmake
       - openssl
+      - libplist
       - gstreamer
       - gst-plugins-base
       - gst-plugins-good
@@ -33,6 +36,7 @@ addons:
       - git
       - cmake
       - libssl-dev
+      - libplist-dev
       - libavahi-compat-libdnssd-dev
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
@@ -67,6 +71,7 @@ before_install:
         $msys2 pacman --sync --noconfirm --needed git \
           mingw-w64-x86_64-cmake \
           mingw-w64-x86_64-openssl \
+          mingw-w64-x86_64-libplist \
           mingw-w64-x86_64-gstreamer \
           mingw-w64-x86_64-gst-plugins-base \
           mingw-w64-x86_64-gst-plugins-good \
